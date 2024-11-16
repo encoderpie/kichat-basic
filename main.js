@@ -1,8 +1,6 @@
 import 'core-js/stable/index.js'
 import 'regenerator-runtime/runtime.js'
 import { app, BrowserWindow, ipcMain } from 'electron'
-import path from 'path'
-import { fileURLToPath } from 'url'
 import Store from 'electron-store'
 import { setupExpressServer } from './server/expressServer.js'
 import {
@@ -17,26 +15,23 @@ import {
 } from './channels/channelOperations.js'
 import { setupPusher } from './pusher/pusherSetup.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const store = new Store()
-
-let mainWindow
-let loginWindow
 let isQuitting = false
-
 global.mainWindow = null
 global.loginWindow = null
 
-const server = setupExpressServer(store, app, createMainWindow, loginWindow)
+const store = new Store()
+const server = setupExpressServer(store)
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error)
+  if (!isQuitting) {
+    app.quit()
+  }
+})
 
 app.disableHardwareAcceleration()
-
-setupErrorHandling()
-
 app.whenReady().then(initializeApp)
-
 app.on('activate', handleActivate)
 app.on('before-quit', handleBeforeQuit)
 app.on('window-all-closed', handleWindowAllClosed)
@@ -44,21 +39,12 @@ app.on('will-quit', handleWillQuit)
 
 ipcMain.on('app-closed', () => app.exit(0))
 
-function setupErrorHandling() {
-  process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error)
-    if (!isQuitting) {
-      app.quit()
-    }
-  })
-}
-
 function initializeApp() {
   const cookies = store.get('cookies')
-  if (!cookies) {
-    global.loginWindow = createLoginWindow()
-  } else {
+  if (cookies) {
     global.mainWindow = createMainWindow()
+  } else {
+    global.loginWindow = createLoginWindow()
   }
 
   const pusher = setupPusher(global.mainWindow)
@@ -72,13 +58,9 @@ function initializeApp() {
 }
 
 function handleActivate() {
+  // If no windows are open, create a new window: for macOS
   if (BrowserWindow.getAllWindows().length === 0) {
-    const cookies = store.get('cookies')
-    if (!cookies) {
-      loginWindow = createLoginWindow()
-    } else {
-      mainWindow = createMainWindow()
-    }
+    initializeApp()
   }
 }
 
@@ -86,8 +68,8 @@ function handleBeforeQuit(event) {
   if (!isQuitting) {
     event.preventDefault()
     isQuitting = true
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('app-closing')
+    if (global.mainWindow && !global.mainWindow.isDestroyed()) {
+      global.mainWindow.webContents.send('app-closing')
     } else {
       app.quit()
     }

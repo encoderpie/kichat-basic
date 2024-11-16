@@ -7,6 +7,7 @@ export function setupPusher(mainWindow) {
     useTLS: true,
   })
 
+  /*
   const eventHandlers = {
     'App\\Events\\ChatMessageEvent': handleChatMessageEvent,
     'App\\Events\\MessageDeletedEvent': handleGenericEvent('message-deleted'),
@@ -25,7 +26,7 @@ export function setupPusher(mainWindow) {
       const parsedData = eventParser(channel, chatroomId, data)
       mainWindow.webContents.send(eventType, parsedData)
     }
-  }
+  } */
 
   return pusher
 }

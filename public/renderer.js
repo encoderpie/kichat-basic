@@ -392,7 +392,7 @@ function createChannelTab(channel) {
   let tabTextButton = document.createElement('button')
   tabTextButton.id = `tab-${channel}`
   tabTextButton.className =
-    'ps-4 pe-3 py-1 h-fit w-full border-t space-x-2 border-gray-500 bg-[var(--main-color)] flex items-center justify-between outline-none'
+    'ps-4 pe-3 py-1 h-fit w-full border-t space-x-2 border-[var(--main-color)] bg-[var(--main-color)] flex items-center justify-between outline-none'
   tabTextButton.innerHTML = `<div>${channel}</div> 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="3 3 10 10" fill="currentColor" class="opacity-0 p-0 pointer-events-none close-btn size-2" id="close-${channel}">
         <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />

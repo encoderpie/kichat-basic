@@ -47,7 +47,7 @@ export function createMainWindow() {
     return { action: 'deny' }
   })
 
-  //Menu.setApplicationMenu(null)
+  Menu.setApplicationMenu(null)
 
   return mainWindow
 }
