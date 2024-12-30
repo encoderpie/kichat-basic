@@ -1,4 +1,4 @@
-# Kichat
+# Kichat - never mind this, v2 is coming
 
 Kichat is an open-source chat client for kick.com. Developed using Electron, it allows users to chat in multiple Kick.com channels simultaneously.
 
